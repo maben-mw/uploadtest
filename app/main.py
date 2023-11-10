@@ -1,4 +1,4 @@
-import binascii
+
 from typing import Annotated
 
 from fastapi import FastAPI
@@ -17,5 +17,10 @@ async def create_file(file: Annotated[bytes, File()]):
 
 @app.post("/uploadfile/")
 async def create_upload_file(file: UploadFile):
-    contents = file.file.read()
-    return PlainTextResponse(binascii.hexlify(contents,"\n",16))
+    text = ""
+    while True:
+        contents = file.file.read(16)
+        if not contents:
+            break
+        text += bytes.hex(contents," ",1) + "\n"
+    return PlainTextResponse(text)
